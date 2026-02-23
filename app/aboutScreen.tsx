@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 export default function AboutScreen() {
   return (
     <View style={styles2.container}>
-      <Text style={styles2.text}>About screen</Text>
+      <Text style={styles2.text}>A fun map for the whole family</Text>
     </View>
   );
 }
@@ -14,6 +14,7 @@ const styles2 = StyleSheet.create({
     backgroundColor: '#25292e',
     justifyContent: 'center',
     alignItems: 'center',
+    height: "auto",
   },
   text: {
     color: '#fff',
