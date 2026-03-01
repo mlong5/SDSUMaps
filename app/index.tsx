@@ -27,7 +27,7 @@ export default function Index() {
           position: "absolute",
           top: 200,
           left: 200,
-          width: 50,
+          width: 100,
           height: 50,
           zIndex: 999,
         }}

@@ -1,25 +1,33 @@
 import { useState } from 'react';
 import {
-  TouchableOpacity,
-  View,
   Alert,
+  ImageSourcePropType,
+  Platform,
+  StyleProp,
   StyleSheet,
+  TouchableOpacity,
+  ViewStyle
 } from 'react-native';
 import ImageC from './image';
 
-export default function PinDetails({ source, style }) {
+type PinDetailsProps = {
+  source: ImageSourcePropType;
+  style: StyleProp<ViewStyle>;
+};
+
+export default function PinDetails({ source, style }: PinDetailsProps) {
   const [pressed, setPressed] = useState(false);
 
   const handlePress = () => {
     setPressed(true);
-    Alert.alert('Pin Clicked!', 'Textbox will go here.');
+    Platform.OS === 'web' ? alert('instead textbox') : Alert.alert('instead textbox')
   };
 
   return (
     <TouchableOpacity
       style={[styles.wrapper, style]}
       onPress={handlePress}
-      activeOpacity={0.6}
+      activeOpacity={0.0}
     >
       <ImageC
         source={source}
