@@ -1,20 +1,27 @@
+// Main screen of the app. Renders the SDSU campus map image with interactive
+// map markers (pins) overlaid on top. Tapping a pin opens a modal popup with
+// event details. Also renders the AboutScreen banner at the bottom.
 import { useState } from "react";
 import { Dimensions, Image, Modal, Pressable, Text, View } from "react-native";
 import AboutScreen from "./aboutScreen";
 import ImageC from "./image";
 import PinDetails from "./pinDetails";
 
-
+// Get device screen dimensions for responsive positioning
 const { width, height } = Dimensions.get('window');
 
 export default function Index() {
+  // Controls visibility of the event details modal
   const [modalVis, setModalVis] = useState(false);
 
   return (
     <>
+      {/* Spacer view to push content into layout flow */}
       <View
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       />
+
+      {/* SDSU campus map image loaded from remote URL */}
       <ImageC
         source={{
           uri: "https://ontheworldmap.com/usa/city/san-diego/sdsu-campus-map.jpg",
@@ -28,9 +35,11 @@ export default function Index() {
           margin: "auto",
         }}
       />
-      {/* Markers Container */}
+
+      {/* Overlay container for all map markers, positioned on top of the map */}
       <View style={{ position: "relative", top: 0, left: 0, width: "100%", height: "100%" }}>
-        {/* Marker */}
+
+        {/* PinDetails marker — tapping shows an alert with placeholder text */}
         <PinDetails
           source={require("../assets/images/marker.png")}
           style={{
@@ -43,7 +52,7 @@ export default function Index() {
           }}
         />
 
-        {/* Marker with bottom, left as position */}
+        {/* Second marker — tapping opens the event details modal */}
         <Pressable onPress={() => setModalVis(true)}>
           <View style={{ justifyContent: "center", alignItems: "center" }}>
             <Image
@@ -60,6 +69,7 @@ export default function Index() {
           </View>
         </Pressable>
 
+        {/* Modal popup shown when a marker is tapped, displays event info */}
         <Modal visible={modalVis} animationType="fade" transparent={true}>
           <View style={{ position: "absolute", top: height * 0.45, left: width * 0.45 }}>
             <View
@@ -77,6 +87,7 @@ export default function Index() {
                 },
               }}
             >
+              {/* Close button dismisses the modal */}
               <Pressable onPress={() => setModalVis(false)}>
                 <Text
                   style={{
@@ -85,21 +96,25 @@ export default function Index() {
                     left: width * 0.075,
                     fontSize: width * 0.01,
                     color: "light-blue",
-                    
                   }}
                 >
                   Close
                 </Text>
               </Pressable>
+
+              {/* Event details text — currently hardcoded, will be dynamic later */}
               <Text style={{alignContent: "center"}}>Aztec Baseball Club 3:30-5:30pm</Text>
             </View>
           </View>
         </Modal>
       </View>
 
+      {/* About section rendered below the map */}
       <AboutScreen />
+
+      {/* Bottom bar decorative strip */}
       <View
-        style={{ backgroundColor: "lightblue",position: "absolute", width: width * 5, height: height * 0.125, top: height * 0.875 }}
+        style={{ backgroundColor: "lightblue", position: "absolute", width: width * 5, height: height * 0.125, top: height * 0.875 }}
       />
     </>
   );

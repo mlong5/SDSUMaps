@@ -1,3 +1,5 @@
+// AboutScreen displays a tagline/description for the app.
+// Rendered as a banner section within the main Index screen.
 import { StyleSheet, Text, View } from 'react-native';
 
 export default function AboutScreen() {
@@ -11,7 +13,7 @@ export default function AboutScreen() {
 const styles2 = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#25292e',
+    backgroundColor: '#25292e', // dark background for contrast
     justifyContent: 'center',
     alignItems: 'center',
     height: "auto",
