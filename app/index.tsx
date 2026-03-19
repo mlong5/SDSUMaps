@@ -2,7 +2,7 @@
 // map markers (pins) overlaid on top. Tapping a pin opens a modal popup with
 // event details. Also renders the AboutScreen banner at the bottom.
 import { useState } from "react";
-import { Dimensions, Image, Modal, Pressable, Text, View } from "react-native";
+import { Dimensions, Image, Modal, Pressable, Text, TextInput, View } from "react-native";
 import AboutScreen from "./aboutScreen";
 import ImageC from "./image";
 import PinDetails from "./pinDetails";
@@ -13,6 +13,40 @@ const { width, height } = Dimensions.get('window');
 export default function Index() {
   // Controls visibility of the event details modal
   const [modalVis, setModalVis] = useState(false);
+  const [addEventVis, setAddEventVis] = useState(false);
+  const [eventName, setEventName] = useState("");
+  const [eventDesc, setEventDesc] = useState("");
+  const [eventTime, setEventTime] = useState("");
+  const [eventDate, setEventDate] = useState("");
+  
+function validateAndSubmitEvent() {
+  if (!eventName || !eventDesc || !eventTime || !eventDate) {
+    alert("Please fill in all fields before submitting.");
+    return;
+  }
+
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/; // Simple YYYY-MM-DD format check
+  if (!dateRegex.test(eventDate)) {
+    alert("Please enter a valid date in YYYY-MM-DD format.");
+    return;
+  }
+  const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/; // Simple HH:MM 24-hour format check
+  if (!timeRegex.test(eventTime)) {
+    alert("Please enter a valid time in HH:MM 24-hour format.");
+    return;
+  }
+  const parsedDate = new Date(`${eventDate}T${eventTime}:00`);
+  if (isNaN(parsedDate.getTime())) {
+    alert("Please enter a valid date and time.");
+    return;
+  }
+
+  // If validation passes, log the event details (or submit to backend)
+  
+  console.log({ eventName, eventDesc, eventTime, eventDate });
+  alert("Event submitted successfully!");
+  setAddEventVis(false);
+}
 
   return (
     <>
@@ -103,12 +137,35 @@ export default function Index() {
               </Pressable>
 
               {/* Event details text — currently hardcoded, will be dynamic later */}
+              {/* TODO(dvicente4482-sys) - update it so it can display and event objects information isntead of static text*/}
               <Text style={{alignContent: "center"}}>Aztec Baseball Club 3:30-5:30pm</Text>
             </View>
           </View>
         </Modal>
       </View>
+      <Modal visible={addEventVis} animationType="slide" transparent={true}>
+        <View style={{ position: "absolute", top: height * 0.25, left: width * 0.1, backgroundColor: "white", padding: 20, borderRadius: 10 }}>
+          <TextInput placeholder="Event Name" value={eventName} onChangeText={setEventName} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
+          <TextInput placeholder="Event Description" value={eventDesc} onChangeText={setEventDesc} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
+          <TextInput placeholder="Event Time" value={eventTime} onChangeText={setEventTime} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
+          <TextInput placeholder="Event Date" value={eventDate} onChangeText={setEventDate} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
+          <Pressable onPress={() => setAddEventVis(false)} style={{ backgroundColor: "lightblue", padding: 10, borderRadius: 5 }}>
+            <Text>Cancel</Text>
+          </Pressable>
+          <Pressable onPress={() => validateAndSubmitEvent()} style={{ backgroundColor: "lightgreen", padding: 10, borderRadius: 5, marginTop: 10 }}>
+            <Text>Submit</Text>
+          </Pressable>
 
+        </View>
+      </Modal>
+
+       {/* Button to open the Add Event form */}
+      <Pressable 
+        onPress={() => setAddEventVis(true)}
+        style={{ position: "absolute", bottom: height * 0.14, right: width * 0.05, zIndex: 1000, backgroundColor: "red", padding: 10 }}
+      >
+        <Text>+ Add Event</Text>
+      </Pressable>
       {/* About section rendered below the map */}
       <AboutScreen />
 
