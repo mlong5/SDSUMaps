@@ -14,6 +14,7 @@ export default function Index() {
   const bottomBarHeight = 50;
   const mapWidth = width;
   const mapHeight = Math.max(height - topBarHeight - bottomBarHeight, 0);
+  //mapHeight is made dependent on topbar height and bottom bar height for spacing
 
   // Controls visibility of the event details modal
   const [modalVis, setModalVis] = useState(false);
@@ -53,6 +54,7 @@ function validateAndSubmitEvent() {
 }
 
   return (
+    //Main container for top banner, map, and bottom banner
     <View style={{ width: "100%", height: "100%", flexDirection: "column" }}>
       <View
         style={{
@@ -66,6 +68,7 @@ function validateAndSubmitEvent() {
         }}
       >
         <Text style={{ color: "#111827", fontSize: 20, fontWeight: "700" }}>SDSU Maps</Text>
+        {/*Actual banner text*/}
       </View>
 
       {/* SDSU campus map with pins anchored inside one responsive wrapper */}
@@ -79,6 +82,7 @@ function validateAndSubmitEvent() {
             height: "100%",
           }}
           contentFit="cover"
+          //important for if really covering total image map area or not
         />
 
         {/* PinDetails marker — tapping shows an alert with placeholder text */}
@@ -97,7 +101,7 @@ function validateAndSubmitEvent() {
         {/* Second marker — tapping opens the event details modal */}
         <Pressable 
           onPress={() => setModalVis(true)}
-          style={{ position: "absolute", top: mapHeight * 0.5, left: mapWidth * 0.5, width: mapWidth * 0.04, height: mapHeight * 0.065, zIndex: 9999 }}
+          style={{ position: "absolute", top: mapHeight * 0.4, left: mapWidth * 0.5, width: mapWidth * 0.04, height: mapHeight * 0.065, zIndex: 9999 }}
         >
           <Image
             source={require("../assets/images/marker.png")}
@@ -109,21 +113,29 @@ function validateAndSubmitEvent() {
         </Pressable>
 
         {/* Modal popup shown when a marker is tapped, displays event info */}
-        <Modal visible={modalVis} animationType="fade" transparent={true}>
+        <Modal
+          visible={modalVis}
+          animationType="fade"
+          transparent={true}
+          supportedOrientations={[
+            "portrait",
+            "portrait-upside-down",
+            "landscape",
+            "landscape-left",
+            "landscape-right",
+          ]}
+        >
           <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.2)" }}>
             <View
               style={{
-                width: Math.min(width * 0.8, 360),
+                width: Math.min(width * 0.4, 230),
                 backgroundColor: "lightgray",
                 borderRadius: 20,
                 padding: 16,
                 alignItems: "center",
-                shadowColor: "#000",
                 justifyContent: "space-between",
-                shadowOffset: {
-                  width: 0,
-                  height: 2,
-                },
+                top: isLandscape ? height * 0.03 : height * 0.04,
+                left: width * 0.04,
               }}
             >
               {/* Close button dismisses the modal */}
@@ -140,14 +152,25 @@ function validateAndSubmitEvent() {
               </Pressable>
 
               {/* Event details text — currently hardcoded, will be dynamic later */}
-              {/* TODO(dvicente4482-sys) - update it so it can display and event objects information isntead of static text*/}
-              <Text style={{alignContent: "center"}}>Aztec Baseball Club 3:30-5:30pm</Text>
+              {/* TODO(dvicente4482-sys) - update it so it can display and event objects information instead of static text*/}
+              <Text style={{ textAlign: "left"}}>Aztec Baseball Club 3:30-5:30pm</Text>
             </View>
           </View>
         </Modal>
       </View>
 
-      <Modal visible={addEventVis} animationType="slide" transparent={true}>
+      <Modal
+        visible={addEventVis}
+        animationType="slide"
+        transparent={true}
+        supportedOrientations={[
+          "portrait",
+          "portrait-upside-down",
+          "landscape",
+          "landscape-left",
+          "landscape-right",
+        ]}
+      >
         <View style={{ flex: 1 }}>
           <View style={{ position: "absolute", top: isLandscape ? height * 0.1 : height * 0.25, left: width * 0.08, width: Math.min(width * 0.72, 420), backgroundColor: "white", padding: 20, borderRadius: 10, maxHeight: isLandscape ? height * 0.8 : undefined }}>
           <TextInput placeholder="Event Name" value={eventName} onChangeText={setEventName} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
