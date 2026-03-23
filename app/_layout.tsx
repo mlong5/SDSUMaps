@@ -7,7 +7,7 @@ export default function RootLayout() {
     // Stack navigator wraps all screens with a native navigation header
     <Stack>
       {/* Main map screen */}
-      <Stack.Screen name="index" options={{ title: 'Map Home' }} />
+      <Stack.Screen name="index" options={{ headerShown: false, orientation: "default" }} />
       {/* About page (currently unused in navigation but registered) */}
       <Stack.Screen name="about" options={{ title: 'About' }} />
     </Stack>

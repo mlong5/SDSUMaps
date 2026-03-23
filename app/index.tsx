@@ -2,15 +2,19 @@
 // map markers (pins) overlaid on top. Tapping a pin opens a modal popup with
 // event details. Also renders the AboutScreen banner at the bottom.
 import { useState } from "react";
-import { Dimensions, Image, Modal, Pressable, Text, TextInput, View } from "react-native";
+import { Image, Modal, Pressable, Text, TextInput, useWindowDimensions, View } from "react-native";
 import AboutScreen from "./aboutScreen";
 import ImageC from "./image";
 import PinDetails from "./pinDetails";
 
-// Get device screen dimensions for responsive positioning
-const { width, height } = Dimensions.get('window');
-
 export default function Index() {
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
+  const topBarHeight = 56;
+  const bottomBarHeight = 50;
+  const mapWidth = width;
+  const mapHeight = Math.max(height - topBarHeight - bottomBarHeight, 0);
+
   // Controls visibility of the event details modal
   const [modalVis, setModalVis] = useState(false);
   const [addEventVis, setAddEventVis] = useState(false);
@@ -49,69 +53,70 @@ function validateAndSubmitEvent() {
 }
 
   return (
-    <>
-      {/* Spacer view to push content into layout flow */}
+    <View style={{ width: "100%", height: "100%", flexDirection: "column" }}>
       <View
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-      />
-
-      {/* SDSU campus map image loaded from remote URL */}
-      <ImageC
-        source={{
-          uri: "https://ontheworldmap.com/usa/city/san-diego/sdsu-campus-map.jpg",
-        }}
         style={{
-          width: width * 0.9,
-          height: height * 0.9,
-          justifyContent: "flex-start",
-          position: "relative",
+          height: topBarHeight,
+          width: "100%",
+          backgroundColor: "#ffffff",
+          justifyContent: "center",
           alignItems: "center",
-          margin: "auto",
+          borderBottomWidth: 1,
+          borderBottomColor: "#d1d5db",
         }}
-      />
+      >
+        <Text style={{ color: "#111827", fontSize: 20, fontWeight: "700" }}>SDSU Maps</Text>
+      </View>
 
-      {/* Overlay container for all map markers, positioned on top of the map */}
-      <View style={{ position: "relative", top: 0, left: 0, width: "100%", height: "100%" }}>
+      {/* SDSU campus map with pins anchored inside one responsive wrapper */}
+      <View style={{ width: mapWidth, height: mapHeight, position: "relative" }}>
+        <ImageC
+          source={{
+            uri: "https://ontheworldmap.com/usa/city/san-diego/sdsu-campus-map.jpg",
+          }}
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+          contentFit="cover"
+        />
 
         {/* PinDetails marker — tapping shows an alert with placeholder text */}
         <PinDetails
           source={require("../assets/images/marker.png")}
           style={{
             position: "absolute",
-            top: height * 0.25,
-            left: width * 0.05,
-            width: width * 0.3,
-            height: height * 0.0625,
+            top: mapHeight * 0.42,
+            left: mapWidth * 0.17,
+            width: mapWidth * 0.05,
+            height: mapHeight * 0.13,
             zIndex: 999,
           }}
         />
 
         {/* Second marker — tapping opens the event details modal */}
-        <Pressable onPress={() => setModalVis(true)}>
-          <View style={{ justifyContent: "center", alignItems: "center" }}>
-            <Image
-              source={require("../assets/images/marker.png")}
-              style={{
-                position: "absolute",
-                bottom: height * 0.5,
-                left: width * 0.5,
-                width: width * 0.03,
-                height: height * 0.05,
-                zIndex: 999,
-              }}
-            />
-          </View>
+        <Pressable 
+          onPress={() => setModalVis(true)}
+          style={{ position: "absolute", top: mapHeight * 0.5, left: mapWidth * 0.5, width: mapWidth * 0.04, height: mapHeight * 0.065, zIndex: 9999 }}
+        >
+          <Image
+            source={require("../assets/images/marker.png")}
+            style={{
+              width: "100%",
+              height: "100%",
+            }}
+          />
         </Pressable>
 
         {/* Modal popup shown when a marker is tapped, displays event info */}
         <Modal visible={modalVis} animationType="fade" transparent={true}>
-          <View style={{ position: "absolute", top: height * 0.45, left: width * 0.45 }}>
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.2)" }}>
             <View
               style={{
-                margin: width * 0.015,
+                width: Math.min(width * 0.8, 360),
                 backgroundColor: "lightgray",
                 borderRadius: 20,
-                padding: width * 0.0275,
+                padding: 16,
                 alignItems: "center",
                 shadowColor: "#000",
                 justifyContent: "space-between",
@@ -125,11 +130,9 @@ function validateAndSubmitEvent() {
               <Pressable onPress={() => setModalVis(false)}>
                 <Text
                   style={{
-                    position: "relative",
-                    bottom: height * 0.01125,
-                    left: width * 0.075,
-                    fontSize: width * 0.01,
-                    color: "light-blue",
+                    fontSize: 14,
+                    color: "#2b6cb0",
+                    marginBottom: 8,
                   }}
                 >
                   Close
@@ -143,8 +146,10 @@ function validateAndSubmitEvent() {
           </View>
         </Modal>
       </View>
+
       <Modal visible={addEventVis} animationType="slide" transparent={true}>
-        <View style={{ position: "absolute", top: height * 0.25, left: width * 0.1, backgroundColor: "white", padding: 20, borderRadius: 10 }}>
+        <View style={{ flex: 1 }}>
+          <View style={{ position: "absolute", top: isLandscape ? height * 0.1 : height * 0.25, left: width * 0.08, width: Math.min(width * 0.72, 420), backgroundColor: "white", padding: 20, borderRadius: 10, maxHeight: isLandscape ? height * 0.8 : undefined }}>
           <TextInput placeholder="Event Name" value={eventName} onChangeText={setEventName} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
           <TextInput placeholder="Event Description" value={eventDesc} onChangeText={setEventDesc} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
           <TextInput placeholder="Event Time" value={eventTime} onChangeText={setEventTime} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
@@ -155,24 +160,21 @@ function validateAndSubmitEvent() {
           <Pressable onPress={() => validateAndSubmitEvent()} style={{ backgroundColor: "lightgreen", padding: 10, borderRadius: 5, marginTop: 10 }}>
             <Text>Submit</Text>
           </Pressable>
-
+          </View>
         </View>
       </Modal>
 
        {/* Button to open the Add Event form */}
       <Pressable 
         onPress={() => setAddEventVis(true)}
-        style={{ position: "absolute", bottom: height * 0.14, right: width * 0.05, zIndex: 1000, backgroundColor: "red", padding: 10 }}
+        style={{ position: "absolute", bottom: bottomBarHeight + 10, right: 20, zIndex: 1000, backgroundColor: "red", padding: 10, borderRadius: 5 }}
       >
         <Text>+ Add Event</Text>
       </Pressable>
-      {/* About section rendered below the map */}
-      <AboutScreen />
 
-      {/* Bottom bar decorative strip */}
-      <View
-        style={{ backgroundColor: "lightblue", position: "absolute", width: width * 5, height: height * 0.125, top: height * 0.875 }}
-      />
-    </>
+      <View style={{ height: bottomBarHeight, width: "100%" }}>
+        <AboutScreen />
+      </View>
+    </View>
   );
 }

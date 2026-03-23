@@ -5,18 +5,18 @@ import { StyleSheet, Text, View } from 'react-native';
 export default function AboutScreen() {
   return (
     <View style={styles2.container}>
-      <Text style={styles2.text}>A fun map for the whole family</Text>
+      <Text style={styles2.text}>Welcome to SDSU Maps! Click on an event to find out more details</Text>
     </View>
   );
 }
 
 const styles2 = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#25292e', // dark background for contrast
     justifyContent: 'center',
     alignItems: 'center',
-    height: "auto",
+    width: '100%',
+    height: '100%',
   },
   text: {
     color: '#fff',
