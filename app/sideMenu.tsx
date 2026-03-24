@@ -29,13 +29,13 @@ export const SideMenu = function () {
             }}>
                 <Text style={{
                     textAlign: "center",
-                    backgroundColor: "darkgray",
+                    backgroundColor: "lightblue",
                     alignSelf: "flex-end",
-                    padding: 5,
+                    padding: 10,
                     borderRadius: 5,
                     zIndex: 1000
                 }}>
-                    Open{"\n"}Events List
+                    Open Events List
                 </Text>
             </Pressable >
 
