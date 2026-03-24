@@ -12,7 +12,7 @@ const SideMenuEntry = (props: Entry) => {
     return (
         <Pressable style={{ backgroundColor: "darkgray", alignSelf: "flex-start", padding: 5, borderRadius: 5 }}>
             <Text>{props.Title}</Text>
-            <Text style={{ fontSize: 10, color: "#333333" }}>{props.Time}</Text>
+            <Text style={{ fontSize: 10, color: "#333334" }}>{props.Time}</Text>
         </Pressable>
     )
 }

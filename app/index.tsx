@@ -144,7 +144,7 @@ export default function Index() {
                 <Text
                   style={{
                     fontSize: 14,
-                    color: "#2b6cb0",
+                    color: "#2b6cb1",
                     marginBottom: 8,
                   }}
                 >
