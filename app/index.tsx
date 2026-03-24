@@ -2,7 +2,7 @@
 // map markers (pins) overlaid on top. Tapping a pin opens a modal popup with
 // event details. Also renders the AboutScreen banner at the bottom.
 import { useState } from "react";
-import { Image, Modal, Pressable, Text, TextInput, useWindowDimensions, View } from "react-native";
+import { Image, Modal, Platform, Pressable, ScrollView, Text, TextInput, useWindowDimensions, View } from "react-native";
 import AboutScreen from "./aboutScreen";
 import ImageC from "./image";
 import PinDetails from "./pinDetails";
@@ -10,6 +10,8 @@ import PinDetails from "./pinDetails";
 export default function Index() {
   const { width, height } = useWindowDimensions();
   const isLandscape = width > height;
+  const isIOS = Platform.OS === "ios";
+  const enableScrollTest = true;
   const topBarHeight = 56;
   const bottomBarHeight = 50;
   const mapWidth = width;
@@ -72,6 +74,17 @@ function validateAndSubmitEvent() {
       </View>
 
       {/* SDSU campus map with pins anchored inside one responsive wrapper */}
+      <ScrollView
+        style={{ width: mapWidth, height: mapHeight }}
+        contentContainerStyle={{ width: mapWidth, height: mapHeight }}
+        minimumZoomScale={isIOS ? 0.6 : 1}
+        maximumZoomScale={isIOS ? 3 : 1}
+        bouncesZoom={isIOS}
+        centerContent
+        pinchGestureEnabled={isIOS}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+      >
       <View style={{ width: mapWidth, height: mapHeight, position: "relative" }}>
         <ImageC
           source={{
@@ -158,6 +171,7 @@ function validateAndSubmitEvent() {
           </View>
         </Modal>
       </View>
+      </ScrollView>
 
       <Modal
         visible={addEventVis}
@@ -172,17 +186,19 @@ function validateAndSubmitEvent() {
         ]}
       >
         <View style={{ flex: 1 }}>
-          <View style={{ position: "absolute", top: isLandscape ? height * 0.1 : height * 0.25, left: width * 0.08, width: Math.min(width * 0.72, 420), backgroundColor: "white", padding: 20, borderRadius: 10, maxHeight: isLandscape ? height * 0.8 : undefined }}>
-          <TextInput placeholder="Event Name" value={eventName} onChangeText={setEventName} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
-          <TextInput placeholder="Event Description" value={eventDesc} onChangeText={setEventDesc} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
-          <TextInput placeholder="Event Time" value={eventTime} onChangeText={setEventTime} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
-          <TextInput placeholder="Event Date" value={eventDate} onChangeText={setEventDate} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
-          <Pressable onPress={() => setAddEventVis(false)} style={{ backgroundColor: "lightblue", padding: 10, borderRadius: 5 }}>
-            <Text>Cancel</Text>
-          </Pressable>
-          <Pressable onPress={() => validateAndSubmitEvent()} style={{ backgroundColor: "lightgreen", padding: 10, borderRadius: 5, marginTop: 10 }}>
-            <Text>Submit</Text>
-          </Pressable>
+          <View style={{ position: "absolute", top: isLandscape ? height * 0.1 : height * 0.25, left: width * 0.08, width: Math.min(width * 0.72, 420), backgroundColor: "white", borderRadius: 10, maxHeight: isLandscape ? height * 0.8 : height * 0.6 }}>
+          <ScrollView contentContainerStyle={{ padding: 20 }} keyboardShouldPersistTaps="handled">
+            <TextInput placeholder="Event Name" value={eventName} onChangeText={setEventName} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
+            <TextInput placeholder="Event Description" value={eventDesc} onChangeText={setEventDesc} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
+            <TextInput placeholder="Event Time" value={eventTime} onChangeText={setEventTime} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
+            <TextInput placeholder="Event Date" value={eventDate} onChangeText={setEventDate} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
+            <Pressable onPress={() => setAddEventVis(false)} style={{ backgroundColor: "lightblue", padding: 10, borderRadius: 5 }}>
+              <Text>Cancel</Text>
+            </Pressable>
+            <Pressable onPress={() => validateAndSubmitEvent()} style={{ backgroundColor: "lightgreen", padding: 10, borderRadius: 5, marginTop: 10 }}>
+              <Text>Submit</Text>
+            </Pressable>
+          </ScrollView>
           </View>
         </View>
       </Modal>
