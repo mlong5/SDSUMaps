@@ -25,17 +25,24 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## Get a fresh project
+## Things to Note
 
-When you're ready, run:
+This project does not have perfect ioS compatibility. 
+We were able to use the ioS app Expo Go as a "sandbox" for checking how the app would appear on ioS by running command line interfaces
+This is why we can only run the app with: 
 
 ```bash
-npm run reset-project
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+The website format consists of a navbar, a map, a left marker, a center marker, and a bottom bar to round things out.
 
-Join our community of developers creating universal apps.
+The website relies heavily on React's interactivity to make things work flexibly, such as ScrollView and Modal to help with visibility
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+View tags are used to wrap when formatting is needed for certain styling.
+
+
+
+
+
+
