@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dimensions, Image, Modal, Pressable, Text, View } from "react-native";
+import { Dimensions, Modal, Pressable, Text, View } from "react-native";
 
 const { width, height } = Dimensions.get('window');
 
@@ -7,16 +7,16 @@ type Entry = {
     Title: string,
     Time: string
 }
-
+// for indevidual entries 
 const SideMenuEntry = (props: Entry) => {
     return (
         <Pressable style={{ backgroundColor: "darkgray", alignSelf: "flex-start", padding: 5, borderRadius: 5 }}>
             <Text>{props.Title}</Text>
-            <Text style={{ fontSize: 10, color: "gray" }}>{props.Time}</Text>
+            <Text style={{ fontSize: 10, color: "#333333" }}>{props.Time}</Text>
         </Pressable>
     )
 }
-
+// main function
 export const SideMenu = function () {
     const [sideModalVis, setSideModalVis] = useState(false);
 

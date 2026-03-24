@@ -200,7 +200,7 @@ export default function Index() {
         <AboutScreen />
       </View>
 
-      {/* Side menu (just seperated for ease of access) */}
+      {/* Side menu (just seperated for ease of access, cleaner imo) */}
       <SideMenu />
 
     </View>
