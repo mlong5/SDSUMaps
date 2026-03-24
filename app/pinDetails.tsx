@@ -29,7 +29,7 @@ export default function PinDetails({ source, style }: PinDetailsProps) {
   const handlePress = () => {
     setPressed(true);
     // Use browser alert on web, native Alert dialog on iOS/Android
-    Platform.OS === 'web' ? alert('instead textbox') : Alert.alert('instead textbox')
+    Platform.OS === 'web' ? alert('Gym Club 2-3:15pm') : Alert.alert('Gym Club 2-3:15pm') ;
   };
 
   return (
