@@ -6,6 +6,7 @@ import { Image, Modal, Platform, Pressable, ScrollView, Text, TextInput, useWind
 import AboutScreen from "./aboutScreen";
 import ImageC from "./image";
 import PinDetails from "./pinDetails";
+import { SideMenu } from './sideMenu';
 
 export default function Index() {
   const { width, height } = useWindowDimensions();
@@ -25,35 +26,35 @@ export default function Index() {
   const [eventDesc, setEventDesc] = useState("");
   const [eventTime, setEventTime] = useState("");
   const [eventDate, setEventDate] = useState("");
-  
-function validateAndSubmitEvent() {
-  if (!eventName || !eventDesc || !eventTime || !eventDate) {
-    alert("Please fill in all fields before submitting.");
-    return;
-  }
 
-  const dateRegex = /^\d{4}-\d{2}-\d{2}$/; // Simple YYYY-MM-DD format check
-  if (!dateRegex.test(eventDate)) {
-    alert("Please enter a valid date in YYYY-MM-DD format.");
-    return;
-  }
-  const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/; // Simple HH:MM 24-hour format check
-  if (!timeRegex.test(eventTime)) {
-    alert("Please enter a valid time in HH:MM 24-hour format.");
-    return;
-  }
-  const parsedDate = new Date(`${eventDate}T${eventTime}:00`);
-  if (isNaN(parsedDate.getTime())) {
-    alert("Please enter a valid date and time.");
-    return;
-  }
+  function validateAndSubmitEvent() {
+    if (!eventName || !eventDesc || !eventTime || !eventDate) {
+      alert("Please fill in all fields before submitting.");
+      return;
+    }
 
-  // If validation passes, log the event details (or submit to backend)
-  
-  console.log({ eventName, eventDesc, eventTime, eventDate });
-  alert("Event submitted successfully!");
-  setAddEventVis(false);
-}
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/; // Simple YYYY-MM-DD format check
+    if (!dateRegex.test(eventDate)) {
+      alert("Please enter a valid date in YYYY-MM-DD format.");
+      return;
+    }
+    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/; // Simple HH:MM 24-hour format check
+    if (!timeRegex.test(eventTime)) {
+      alert("Please enter a valid time in HH:MM 24-hour format.");
+      return;
+    }
+    const parsedDate = new Date(`${eventDate}T${eventTime}:00`);
+    if (isNaN(parsedDate.getTime())) {
+      alert("Please enter a valid date and time.");
+      return;
+    }
+
+    // If validation passes, log the event details (or submit to backend)
+
+    console.log({ eventName, eventDesc, eventTime, eventDate });
+    alert("Event submitted successfully!");
+    setAddEventVis(false);
+  }
 
   return (
     //Main container for top banner, map, and bottom banner
@@ -95,7 +96,7 @@ function validateAndSubmitEvent() {
             height: "100%",
           }}
           contentFit="cover"
-          //important for if really covering total image map area or not
+        //important for if really covering total image map area or not
         />
 
         {/* PinDetails marker — tapping shows an alert with placeholder text */}
@@ -112,7 +113,7 @@ function validateAndSubmitEvent() {
         />
 
         {/* Second marker — tapping opens the event details modal */}
-        <Pressable 
+        <Pressable
           onPress={() => setModalVis(true)}
           style={{ position: "absolute", top: mapHeight * 0.4, left: mapWidth * 0.5, width: mapWidth * 0.04, height: mapHeight * 0.065, zIndex: 9999 }}
         >
@@ -156,7 +157,7 @@ function validateAndSubmitEvent() {
                 <Text
                   style={{
                     fontSize: 14,
-                    color: "#2b6cb0",
+                    color: "#2b6cb1",
                     marginBottom: 8,
                   }}
                 >
@@ -166,7 +167,7 @@ function validateAndSubmitEvent() {
 
               {/* Event details text — currently hardcoded, will be dynamic later */}
               {/* TODO(dvicente4482-sys) - update it so it can display and event objects information instead of static text*/}
-              <Text style={{ textAlign: "left"}}>Aztec Baseball Club 3:30-5:30pm</Text>
+              <Text style={{ textAlign: "left" }}>Aztec Baseball Club 3:30-5:30pm</Text>
             </View>
           </View>
         </Modal>
@@ -203,8 +204,8 @@ function validateAndSubmitEvent() {
         </View>
       </Modal>
 
-       {/* Button to open the Add Event form */}
-      <Pressable 
+      {/* Button to open the Add Event form */}
+      <Pressable
         onPress={() => setAddEventVis(true)}
         style={{ position: "absolute", bottom: bottomBarHeight + 10, right: 20, zIndex: 1000, backgroundColor: "red", padding: 10, borderRadius: 5 }}
       >
@@ -214,6 +215,10 @@ function validateAndSubmitEvent() {
       <View style={{ height: bottomBarHeight, width: "100%" }}>
         <AboutScreen />
       </View>
+
+      {/* Side menu (just seperated for ease of access, cleaner imo) */}
+      <SideMenu />
+
     </View>
   );
 }
