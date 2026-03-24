@@ -6,6 +6,7 @@ import { Image, Modal, Pressable, Text, TextInput, useWindowDimensions, View } f
 import AboutScreen from "./aboutScreen";
 import ImageC from "./image";
 import PinDetails from "./pinDetails";
+import { SideMenu } from './sideMenu';
 
 export default function Index() {
   const { width, height } = useWindowDimensions();
@@ -23,35 +24,35 @@ export default function Index() {
   const [eventDesc, setEventDesc] = useState("");
   const [eventTime, setEventTime] = useState("");
   const [eventDate, setEventDate] = useState("");
-  
-function validateAndSubmitEvent() {
-  if (!eventName || !eventDesc || !eventTime || !eventDate) {
-    alert("Please fill in all fields before submitting.");
-    return;
-  }
 
-  const dateRegex = /^\d{4}-\d{2}-\d{2}$/; // Simple YYYY-MM-DD format check
-  if (!dateRegex.test(eventDate)) {
-    alert("Please enter a valid date in YYYY-MM-DD format.");
-    return;
-  }
-  const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/; // Simple HH:MM 24-hour format check
-  if (!timeRegex.test(eventTime)) {
-    alert("Please enter a valid time in HH:MM 24-hour format.");
-    return;
-  }
-  const parsedDate = new Date(`${eventDate}T${eventTime}:00`);
-  if (isNaN(parsedDate.getTime())) {
-    alert("Please enter a valid date and time.");
-    return;
-  }
+  function validateAndSubmitEvent() {
+    if (!eventName || !eventDesc || !eventTime || !eventDate) {
+      alert("Please fill in all fields before submitting.");
+      return;
+    }
 
-  // If validation passes, log the event details (or submit to backend)
-  
-  console.log({ eventName, eventDesc, eventTime, eventDate });
-  alert("Event submitted successfully!");
-  setAddEventVis(false);
-}
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/; // Simple YYYY-MM-DD format check
+    if (!dateRegex.test(eventDate)) {
+      alert("Please enter a valid date in YYYY-MM-DD format.");
+      return;
+    }
+    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/; // Simple HH:MM 24-hour format check
+    if (!timeRegex.test(eventTime)) {
+      alert("Please enter a valid time in HH:MM 24-hour format.");
+      return;
+    }
+    const parsedDate = new Date(`${eventDate}T${eventTime}:00`);
+    if (isNaN(parsedDate.getTime())) {
+      alert("Please enter a valid date and time.");
+      return;
+    }
+
+    // If validation passes, log the event details (or submit to backend)
+
+    console.log({ eventName, eventDesc, eventTime, eventDate });
+    alert("Event submitted successfully!");
+    setAddEventVis(false);
+  }
 
   return (
     //Main container for top banner, map, and bottom banner
@@ -82,7 +83,7 @@ function validateAndSubmitEvent() {
             height: "100%",
           }}
           contentFit="cover"
-          //important for if really covering total image map area or not
+        //important for if really covering total image map area or not
         />
 
         {/* PinDetails marker — tapping shows an alert with placeholder text */}
@@ -99,7 +100,7 @@ function validateAndSubmitEvent() {
         />
 
         {/* Second marker — tapping opens the event details modal */}
-        <Pressable 
+        <Pressable
           onPress={() => setModalVis(true)}
           style={{ position: "absolute", top: mapHeight * 0.4, left: mapWidth * 0.5, width: mapWidth * 0.04, height: mapHeight * 0.065, zIndex: 9999 }}
         >
@@ -153,7 +154,7 @@ function validateAndSubmitEvent() {
 
               {/* Event details text — currently hardcoded, will be dynamic later */}
               {/* TODO(dvicente4482-sys) - update it so it can display and event objects information instead of static text*/}
-              <Text style={{ textAlign: "left"}}>Aztec Baseball Club 3:30-5:30pm</Text>
+              <Text style={{ textAlign: "left" }}>Aztec Baseball Club 3:30-5:30pm</Text>
             </View>
           </View>
         </Modal>
@@ -173,22 +174,22 @@ function validateAndSubmitEvent() {
       >
         <View style={{ flex: 1 }}>
           <View style={{ position: "absolute", top: isLandscape ? height * 0.1 : height * 0.25, left: width * 0.08, width: Math.min(width * 0.72, 420), backgroundColor: "white", padding: 20, borderRadius: 10, maxHeight: isLandscape ? height * 0.8 : undefined }}>
-          <TextInput placeholder="Event Name" value={eventName} onChangeText={setEventName} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
-          <TextInput placeholder="Event Description" value={eventDesc} onChangeText={setEventDesc} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
-          <TextInput placeholder="Event Time" value={eventTime} onChangeText={setEventTime} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
-          <TextInput placeholder="Event Date" value={eventDate} onChangeText={setEventDate} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
-          <Pressable onPress={() => setAddEventVis(false)} style={{ backgroundColor: "lightblue", padding: 10, borderRadius: 5 }}>
-            <Text>Cancel</Text>
-          </Pressable>
-          <Pressable onPress={() => validateAndSubmitEvent()} style={{ backgroundColor: "lightgreen", padding: 10, borderRadius: 5, marginTop: 10 }}>
-            <Text>Submit</Text>
-          </Pressable>
+            <TextInput placeholder="Event Name" value={eventName} onChangeText={setEventName} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
+            <TextInput placeholder="Event Description" value={eventDesc} onChangeText={setEventDesc} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
+            <TextInput placeholder="Event Time" value={eventTime} onChangeText={setEventTime} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
+            <TextInput placeholder="Event Date" value={eventDate} onChangeText={setEventDate} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
+            <Pressable onPress={() => setAddEventVis(false)} style={{ backgroundColor: "lightblue", padding: 10, borderRadius: 5 }}>
+              <Text>Cancel</Text>
+            </Pressable>
+            <Pressable onPress={() => validateAndSubmitEvent()} style={{ backgroundColor: "lightgreen", padding: 10, borderRadius: 5, marginTop: 10 }}>
+              <Text>Submit</Text>
+            </Pressable>
           </View>
         </View>
       </Modal>
 
-       {/* Button to open the Add Event form */}
-      <Pressable 
+      {/* Button to open the Add Event form */}
+      <Pressable
         onPress={() => setAddEventVis(true)}
         style={{ position: "absolute", bottom: bottomBarHeight + 10, right: 20, zIndex: 1000, backgroundColor: "red", padding: 10, borderRadius: 5 }}
       >
@@ -198,6 +199,10 @@ function validateAndSubmitEvent() {
       <View style={{ height: bottomBarHeight, width: "100%" }}>
         <AboutScreen />
       </View>
+
+      {/* Side menu (just seperated for ease of access) */}
+      <SideMenu />
+
     </View>
   );
 }
