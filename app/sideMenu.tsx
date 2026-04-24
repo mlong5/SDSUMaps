@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { Dimensions, Modal, Pressable, Text, View } from "react-native";
-
-const { width, height } = Dimensions.get('window');
+import { Modal, Pressable, Text, useWindowDimensions, View } from "react-native";
 
 type Entry = {
     Title: string,
@@ -18,6 +16,7 @@ const SideMenuEntry = (props: Entry) => {
 }
 // main function
 export const SideMenu = function () {
+    const { width, height } = useWindowDimensions();
     const [sideModalVis, setSideModalVis] = useState(false);
 
     return (
@@ -67,7 +66,7 @@ export const SideMenu = function () {
                                     // bottom: height * 0.041125,
                                     // left: width * 0.082,
                                     // fontSize: 10,
-                                    color: "dark_grey",
+                                    color: "darkgray",
                                     backgroundColor: "darkgray",
                                     alignSelf: "flex-end",
                                     padding: 5,
