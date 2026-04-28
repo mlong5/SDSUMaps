@@ -87,16 +87,18 @@ export default function Index() {
         showsHorizontalScrollIndicator={false}
       >
       <View style={{ width: mapWidth, height: mapHeight, position: "relative" }}>
+        {/* TASK C1: campus map is now bundled locally instead of fetched from
+            an external URL (faster load, works offline, and lets us swap in
+            a higher-res official SDSU map by replacing this single asset).
+            TODO(bryan): replace sdsu_campus_map.jpg with a higher-resolution
+            export from https://map.sdsu.edu before final submission. */}
         <ImageC
-          source={{
-            uri: "https://ontheworldmap.com/usa/city/san-diego/sdsu-campus-map.jpg",
-          }}
+          source={require("../assets/images/sdsu_campus_map.jpg")}
           style={{
             width: "100%",
             height: "100%",
           }}
           contentFit="cover"
-        //important for if really covering total image map area or not
         />
 
         {/* PinDetails marker — tapping shows an alert with placeholder text */}

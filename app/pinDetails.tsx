@@ -2,7 +2,6 @@
 // On press, it shows an alert (native on mobile, browser alert on web)
 // with placeholder event info. The `pressed` state tracks whether the
 // pin has been tapped at least once.
-import { useState } from 'react';
 import {
   Alert,
   ImageSourcePropType,
@@ -23,13 +22,8 @@ type PinDetailsProps = {
 };
 
 export default function PinDetails({ source, style }: PinDetailsProps) {
-  // Tracks whether this pin has ever been pressed
-  const [pressed, setPressed] = useState(false);
-
   const handlePress = () => {
-    setPressed(true);
-    // Use browser alert on web, native Alert dialog on iOS/Android
-    Platform.OS === 'web' ? alert('Gym Club 2-3:15pm') : Alert.alert('Gym Club 2-3:15pm') ;
+    Platform.OS === 'web' ? alert('Gym Club 2-3:15pm') : Alert.alert('Gym Club 2-3:15pm');
   };
 
   return (
