@@ -2,6 +2,18 @@
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
+## Group 4 — Who's doing what
+
+See [`docs/TEAM_TASKS.md`](docs/TEAM_TASKS.md) for the full task board,
+branches, deliverables, and timeline.
+
+| Owner   | Track                                | Branch                              |
+|---------|--------------------------------------|-------------------------------------|
+| Brandon | Database & Backend (Firebase)        | `feature/brandon/firebase-backend`  |
+| Talan   | Event Display & Side Menu            | `feature/talan/event-display`       |
+| Bryan   | UI Polish, Map Upgrade, iOS Fix      | `feature/bryan/ui-polish-map`       |
+| Matt    | Pins, Locations, Integration Lead    | `feature/matt/pins-integration`     |
+
 ## Get started
 
 1. Install dependencies
