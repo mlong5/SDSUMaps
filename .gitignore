@@ -39,6 +39,9 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# agent / sweep scratch
+.agent/
+
 app-example
 
 # generated native folders
