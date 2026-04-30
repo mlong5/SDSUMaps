@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Image, Modal, Platform, Pressable, ScrollView, Text, TextInput, useWindowDimensions, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import AboutScreen from "./aboutScreen";
+import { colors, radius, spacing, tap, typography } from "./constants/theme";
 import ImageC from "./image";
 import PinDetails from "./pinDetails";
 import { SideMenu } from './sideMenu';
@@ -61,20 +62,20 @@ export default function Index() {
   return (
     // SafeAreaView keeps top bar below the iPhone notch/status bar and the
     // floating Add Event button above the home indicator, on iOS portrait.
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }} edges={["top", "bottom"]}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }} edges={["top", "bottom"]}>
       <View style={{ flex: 1, flexDirection: "column" }}>
       <View
         style={{
           height: topBarHeight,
           width: "100%",
-          backgroundColor: "#ffffff",
+          backgroundColor: colors.white,
           justifyContent: "center",
           alignItems: "center",
           borderBottomWidth: 1,
-          borderBottomColor: "#d1d5db",
+          borderBottomColor: colors.neutral300,
         }}
       >
-        <Text style={{ color: "#111827", fontSize: 20, fontWeight: "700" }}>SDSU Maps</Text>
+        <Text style={{ ...typography.h2, color: colors.scarlet }}>SDSU Maps</Text>
       </View>
 
       {/* SDSU campus map with pins anchored inside one responsive wrapper.
@@ -134,11 +135,13 @@ export default function Index() {
           />
         </Pressable>
 
-        {/* Modal popup shown when a marker is tapped, displays event info */}
+        {/* Modal popup shown when a marker is tapped, displays event info.
+            Backdrop tap and Android hardware back both dismiss. */}
         <Modal
           visible={modalVis}
           animationType="fade"
           transparent={true}
+          onRequestClose={() => setModalVis(false)}
           supportedOrientations={[
             "portrait",
             "portrait-upside-down",
@@ -147,37 +150,53 @@ export default function Index() {
             "landscape-right",
           ]}
         >
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.2)" }}>
-            <View
+          <Pressable
+            onPress={() => setModalVis(false)}
+            style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colors.overlay }}
+            accessibilityLabel="Close event details"
+          >
+            <Pressable
+              // Inner pressable swallows taps so backdrop dismiss only fires
+              // outside the card body.
+              onPress={(e) => e.stopPropagation?.()}
               style={{
-                width: Math.min(width * 0.4, 230),
-                backgroundColor: "lightgray",
-                borderRadius: 20,
-                padding: 16,
-                alignItems: "center",
-                justifyContent: "space-between",
-                top: isLandscape ? height * 0.03 : height * 0.04,
-                left: width * 0.04,
+                minWidth: Math.min(width * 0.7, 320),
+                maxWidth: 360,
+                backgroundColor: colors.white,
+                borderRadius: radius.lg,
+                paddingVertical: spacing.lg,
+                paddingHorizontal: spacing.lg,
               }}
             >
-              {/* Close button dismisses the modal */}
-              <Pressable onPress={() => setModalVis(false)}>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: "#2b6cb1",
-                    marginBottom: 8,
-                  }}
-                >
-                  Close
-                </Text>
+              {/* Close X — visible affordance, ≥44pt hit area, top-right. */}
+              <Pressable
+                onPress={() => setModalVis(false)}
+                accessibilityRole="button"
+                accessibilityLabel="Close dialog"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                style={{
+                  position: "absolute",
+                  top: spacing.sm,
+                  right: spacing.sm,
+                  width: tap.minSize,
+                  height: tap.minSize,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  zIndex: 2,
+                }}
+              >
+                <Text style={{ ...typography.h3, color: colors.neutral600 }}>×</Text>
               </Pressable>
 
-              {/* Event details text — currently hardcoded, will be dynamic later */}
-              {/* TODO(dvicente4482-sys) - update it so it can display and event objects information instead of static text*/}
-              <Text style={{ textAlign: "left" }}>Aztec Baseball Club 3:30-5:30pm</Text>
-            </View>
-          </View>
+              <Text style={{ ...typography.h3, color: colors.neutral900, marginBottom: spacing.xs, marginRight: tap.minSize }}>
+                Aztec Baseball Club
+              </Text>
+              {/* TODO(dvicente4482-sys): wire to dynamic event object instead of static text */}
+              <Text style={{ ...typography.body, color: colors.neutral700 }}>
+                3:30 – 5:30 pm
+              </Text>
+            </Pressable>
+          </Pressable>
         </Modal>
       </View>
       </ScrollView>
@@ -186,6 +205,7 @@ export default function Index() {
         visible={addEventVis}
         animationType="slide"
         transparent={true}
+        onRequestClose={() => setAddEventVis(false)}
         supportedOrientations={[
           "portrait",
           "portrait-upside-down",
@@ -212,13 +232,32 @@ export default function Index() {
         </View>
       </Modal>
 
-      {/* Button to open the Add Event form. bottom offset accounts for the
-          AboutScreen banner so it doesn't overlap the banner text. */}
+      {/* Floating "Add Event" button. bottom offset clears the AboutScreen
+          banner; minHeight=tap.minSize keeps the hit target ≥44pt. */}
       <Pressable
         onPress={() => setAddEventVis(true)}
-        style={{ position: "absolute", bottom: bottomBarHeight + 10, right: 20, zIndex: 1000, backgroundColor: "red", padding: 10, borderRadius: 5 }}
+        accessibilityRole="button"
+        accessibilityLabel="Add a new campus event"
+        style={({ pressed }) => ({
+          position: "absolute",
+          bottom: bottomBarHeight + spacing.md,
+          right: spacing.lg,
+          zIndex: 1000,
+          minHeight: tap.minSize,
+          paddingHorizontal: spacing.lg,
+          paddingVertical: spacing.sm,
+          borderRadius: radius.pill,
+          backgroundColor: pressed ? colors.scarletDark : colors.scarlet,
+          alignItems: "center",
+          justifyContent: "center",
+          shadowColor: colors.black,
+          shadowOpacity: 0.18,
+          shadowRadius: 6,
+          shadowOffset: { width: 0, height: 2 },
+          elevation: 3,
+        })}
       >
-        <Text>+ Add Event</Text>
+        <Text style={{ ...typography.button, color: colors.scarletInk }}>+ Add Event</Text>
       </Pressable>
 
       <View style={{ height: bottomBarHeight, width: "100%" }}>
