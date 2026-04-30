@@ -3,6 +3,7 @@
 // event details. Also renders the AboutScreen banner at the bottom.
 import { useState } from "react";
 import { Image, Modal, Platform, Pressable, ScrollView, Text, TextInput, useWindowDimensions, View } from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import AboutScreen from "./aboutScreen";
 import ImageC from "./image";
 import PinDetails from "./pinDetails";
@@ -10,14 +11,15 @@ import { SideMenu } from './sideMenu';
 
 export default function Index() {
   const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const isLandscape = width > height;
   const isIOS = Platform.OS === "ios";
-  const enableScrollTest = true;
   const topBarHeight = 56;
   const bottomBarHeight = 50;
   const mapWidth = width;
-  const mapHeight = Math.max(height - topBarHeight - bottomBarHeight, 0);
-  //mapHeight is made dependent on topbar height and bottom bar height for spacing
+  // Subtract notch/home-indicator insets so the ScrollView doesn't get clipped
+  // under iPhone's status bar or home indicator in portrait.
+  const mapHeight = Math.max(height - topBarHeight - bottomBarHeight - insets.top - insets.bottom, 0);
 
   // Controls visibility of the event details modal
   const [modalVis, setModalVis] = useState(false);
@@ -57,8 +59,10 @@ export default function Index() {
   }
 
   return (
-    //Main container for top banner, map, and bottom banner
-    <View style={{ width: "100%", height: "100%", flexDirection: "column" }}>
+    // SafeAreaView keeps top bar below the iPhone notch/status bar and the
+    // floating Add Event button above the home indicator, on iOS portrait.
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }} edges={["top", "bottom"]}>
+      <View style={{ flex: 1, flexDirection: "column" }}>
       <View
         style={{
           height: topBarHeight,
@@ -71,14 +75,16 @@ export default function Index() {
         }}
       >
         <Text style={{ color: "#111827", fontSize: 20, fontWeight: "700" }}>SDSU Maps</Text>
-        {/*Actual banner text*/}
       </View>
 
-      {/* SDSU campus map with pins anchored inside one responsive wrapper */}
+      {/* SDSU campus map with pins anchored inside one responsive wrapper.
+          minimumZoomScale=1 prevents users from pinch-zooming below the
+          container size, which on iOS portrait used to leave the map
+          shrunken with white space around it. */}
       <ScrollView
         style={{ width: mapWidth, height: mapHeight }}
         contentContainerStyle={{ width: mapWidth, height: mapHeight }}
-        minimumZoomScale={isIOS ? 0.6 : 1}
+        minimumZoomScale={1}
         maximumZoomScale={isIOS ? 3 : 1}
         bouncesZoom={isIOS}
         centerContent
@@ -98,7 +104,7 @@ export default function Index() {
             width: "100%",
             height: "100%",
           }}
-          contentFit="cover"
+          contentFit="contain"
         />
 
         {/* PinDetails marker — tapping shows an alert with placeholder text */}
@@ -206,7 +212,8 @@ export default function Index() {
         </View>
       </Modal>
 
-      {/* Button to open the Add Event form */}
+      {/* Button to open the Add Event form. bottom offset accounts for the
+          AboutScreen banner so it doesn't overlap the banner text. */}
       <Pressable
         onPress={() => setAddEventVis(true)}
         style={{ position: "absolute", bottom: bottomBarHeight + 10, right: 20, zIndex: 1000, backgroundColor: "red", padding: 10, borderRadius: 5 }}
@@ -221,6 +228,7 @@ export default function Index() {
       {/* Side menu (just seperated for ease of access, cleaner imo) */}
       <SideMenu />
 
-    </View>
+      </View>
+    </SafeAreaView>
   );
 }
