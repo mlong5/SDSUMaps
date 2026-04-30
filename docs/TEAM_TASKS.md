@@ -16,8 +16,8 @@ checkboxes as you finish things and push to your branch.
 | Bryan   | C — UI Polish, Map Upgrade, iOS Fix  | `feature/bryan/ui-polish-map`       |
 | Matt    | D — Pins, Locations, Integration Lead| `feature/matt/pins-integration`     |
 
-**Merge lead:** Matt. All branches merge into `feature/integration` first,
-then into `master` once the end-to-end flow passes.
+**Merge lead:** Bryan (group leader). Matt remains integration owner for
+Track D and reviews integration-branch merges before they roll up to master.
 
 ---
 
@@ -73,21 +73,21 @@ once A4 ships, no hardcoded `Aztec Game Lab` placeholder rows.
 
 Branch: `feature/bryan/ui-polish-map`
 
-- [x] **C1** Source updated SDSU campus map image, save as
-      `assets/images/sdsu_campus_map.jpg`, switch `app/index.tsx` from the
-      external `ontheworldmap.com` URL to the local asset
-      &nbsp;— *initial commit done; replace with a higher-res export from
-      https://map.sdsu.edu before final submission*
-- [ ] **C2** Fix iOS portrait layout — `useWindowDimensions()` is already
-      in place, but verify `mapHeight` and `ScrollView` behave on rotation;
-      fix the map `contentFit` if pins drift
-- [ ] **C3** UI polish: SDSU scarlet (`#CC0033`) accents, ≥44pt touch
-      targets, clean navbar, dismiss buttons on every modal
-- [ ] **C4** Add Event form polish: labels, validation indicators, Cancel
-      button (already present — style it), submit spinner, success toast
-- [ ] **C5** Layout pass on web / iOS portrait / iOS landscape
-- [ ] **C6** Update `README.md` with Firebase `.env` setup, screenshots,
-      file map
+- [~] **C1** Local map asset wired (`sdsu_campus_map.jpg`, no external
+      URL). _(partial: current asset is 276×183 / 22 KB — thumbnail-sized.
+      Higher-res export from https://map.sdsu.edu still owed.)_
+- [x] **C2** iOS portrait layout — `useWindowDimensions`, `contentFit="contain"`,
+      `SafeAreaView` wrap, `minimumZoomScale=1`
+- [x] **C3** UI polish — `app/constants/theme.ts` with SDSU scarlet
+      (`#A6192E`), ≥44pt tap targets, `onRequestClose` + visible close
+      affordance on every Modal
+- [x] **C4** Add Event form — labeled fields, inline validation, Cancel,
+      submit spinner (`ActivityIndicator`), success Alert
+- [?] **C5** Manual responsive walkthrough on web / iOS portrait /
+      iOS landscape _(unverified — static contrast pass is green; awaiting
+      Bryan's `npx expo start` walkthrough)_
+- [x] **C6** README — Firebase `.env` setup, project layout, dev commands,
+      known limits
 
 **Deliverables:** clean UI, no portrait-iOS layout breakage, polished
 README with screenshots.
@@ -119,8 +119,10 @@ branch, signed-off E2E checklist.
 - **New folders to create as needed:** `app/components/`, `app/services/`,
   `app/utils/`, `app/constants/`, `docs/`
 - **Never commit:** `.env`, Firebase API keys, anything in `node_modules/`
-- **Branch flow:** branch off `master` → push → PR → Matt reviews → merge
-  into `feature/integration` first, then into `master`
+- **Branch flow:** branch off `master` → push → PR → **Bryan reviews &
+  squash-merges**. Track D feature branches may merge into
+  `feature/integration` first (Matt curates that branch); all other tracks
+  merge straight to `master` via PR.
 - **Daily standup (async, group chat):** yesterday / today / blockers
 
 ---
@@ -142,3 +144,11 @@ branch, signed-off E2E checklist.
 
 Speaking parts (5–7 min): Bryan intro + map, Brandon backend, Talan event
 display, Matt pins + integration story.
+
+---
+
+_Last reconciled by automated sweep: 2026-04-30 against `master` @ d100e9a._
+_Track C checkbox updates and merge-lead change are evidence-based — see
+`STATUS_REPORT.md` and `.agent/audit.json` (local) for the file/line
+references behind each tick._
+
