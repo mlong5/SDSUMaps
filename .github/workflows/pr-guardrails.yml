@@ -52,7 +52,7 @@ jobs:
               brandon: 'brandonwms120',
               talan:   'Kyzzo',
               bryan:   'BryanD17',
-              matt:    'mlong5',
+              matt:    'DiploMatt02',
             };
             const m = pr.head.ref.match(/^feature\/(brandon|talan|bryan|matt)\//);
             if (m) {
