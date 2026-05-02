@@ -55,9 +55,9 @@ form, Jest run green.
 
 Branch: `feature/talan/event-display`
 
-- [ ] **B1** `app/utils/mockEvents.ts` — 4–5 mock events matching A2 schema
+- [x] **B1** `app/utils/mockEvents.ts` — 4–5 mock events matching A2 schema
 - [x] **B2** `app/components/EventList.tsx` — card list sorted by time
-- [ ] **B3** Wire `EventList` into `app/sideMenu.tsx`; add loading + empty
+- [x] **B3** Wire `EventList` into `app/sideMenu.tsx`; add loading + empty
       states
 - [ ] **B4** `app/pinDetails.tsx` — filter events to the tapped pin's
       location (use `app/constants/locations.ts` from D3 for exact strings)
