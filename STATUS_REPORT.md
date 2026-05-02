@@ -59,7 +59,7 @@ behind**, and Brandon + Matt are on the critical path for everyone else.
 |------|--------|----------|
 | B1 `app/utils/mockEvents.ts` | ✅ Done | `app/utils/mockEvents.tsx` on master |
 | B2 `EventList.tsx` | ✅ Done | `app/components/EventList.tsx` on master |
-| B3 EventList wired into `sideMenu.tsx` | ✅ Done | sideMenu.tsx imports EventList from ./components/EventList; PLACEHOLDER_EVENTS array and SideMenuEntry component removed; ScrollView replaced with <EventList events={MOCK_EVENTS} loading={false} />; loading spinner and empty state delegated to EventList props |
+| B3 EventList wired into `sideMenu.tsx` | ✅ Done | `sideMenu.tsx` imports EventList from `./components/EventList`; PLACEHOLDER_EVENTS array and SideMenuEntry component removed; ScrollView replaced with `<EventList events={MOCK_EVENTS} loading={false} />`; loading spinner and empty state delegated to EventList props |
 | B4 `pinDetails.tsx` filters events | 🚫 NotDone | only fires a static `Alert.alert('Gym Club…')`; no `events.filter`, no "See All" link |
 | B5 swap mock for `getActiveEvents` | 🚫 NotDone (blocked by A4) | `getActiveEvents` not referenced anywhere |
 | B6 tests | 🚫 NotDone | no test files |
