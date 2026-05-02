@@ -16,7 +16,7 @@ behind**, and Brandon + Matt are on the critical path for everyone else.
 | Teammate | Track | On track? | Done | Partial | Not done | Notes |
 |----------|-------|-----------|------|---------|----------|-------|
 | Bryan    | C — UI / map / iOS  | ✅ on-track | 4 | 1 | 0 (1 unverified) | C1 partial (low-res asset), C5 awaiting walkthrough |
-| Talan    | B — event display   | 🚫 behind | 1 | 0 | 5 | B5 hard-blocked on Brandon (A4); B4 hard-blocked on Matt (D3) |
+| Talan    | B — event display   | ⚠️ lagging | 3 | 0 | 3 | B5 hard-blocked on Brandon (A4); B4 hard-blocked on Matt (D3) |
 | Brandon  | A — backend         | 🚫 critical-path blocker | 0 | 0 | 6 | branch only has `.env.example` + `.gitignore`; no Firebase code |
 | Matt     | D — pins / integration | 🚫 critical-path blocker | 0 | 0 | 5 | branch `feature/matt/pins-integration` does not exist on origin |
 
@@ -57,9 +57,9 @@ behind**, and Brandon + Matt are on the critical path for everyone else.
 
 | Task | Status | Evidence |
 |------|--------|----------|
-| B1 `app/utils/mockEvents.ts` | 🚫 NotDone | file does not exist |
+| B1 `app/utils/mockEvents.ts` | ✅ Done | `app/utils/mockEvents.tsx` on master |
 | B2 `EventList.tsx` | ✅ Done | `app/components/EventList.tsx` on master |
-| B3 EventList wired into `sideMenu.tsx` | 🚫 NotDone | `sideMenu.tsx` uses an in-file `PLACEHOLDER_EVENTS` array; no `EventList` import; no `ActivityIndicator` / empty-state |
+| B3 EventList wired into `sideMenu.tsx` | ✅ Done | `sideMenu.tsx` imports EventList from `./components/EventList`; PLACEHOLDER_EVENTS array and SideMenuEntry component removed; ScrollView replaced with `<EventList events={MOCK_EVENTS} loading={false} />`; loading spinner and empty state delegated to EventList props |
 | B4 `pinDetails.tsx` filters events | 🚫 NotDone | only fires a static `Alert.alert('Gym Club…')`; no `events.filter`, no "See All" link |
 | B5 swap mock for `getActiveEvents` | 🚫 NotDone (blocked by A4) | `getActiveEvents` not referenced anywhere |
 | B6 tests | 🚫 NotDone | no test files |

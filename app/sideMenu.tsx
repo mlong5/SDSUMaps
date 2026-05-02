@@ -1,45 +1,8 @@
 import { useState } from "react";
-import { Modal, Pressable, ScrollView, Text, useWindowDimensions, View } from "react-native";
+import { Modal, Pressable, Text, useWindowDimensions, View } from "react-native";
+import EventList from "./components/EventList";
 import { colors, radius, spacing, tap, typography } from "./constants/theme";
-
-type Entry = {
-  Title: string;
-  Time: string;
-};
-
-// Single event row inside the side menu. Tapping is a no-op for now —
-// once Brandon's eventService lands, this will navigate to a detail view.
-const SideMenuEntry = (props: Entry) => (
-  <Pressable
-    accessibilityRole="button"
-    accessibilityLabel={`${props.Title}, ${props.Time}`}
-    style={({ pressed }) => ({
-      width: "100%",
-      paddingVertical: spacing.sm,
-      paddingHorizontal: spacing.md,
-      borderRadius: radius.md,
-      marginBottom: spacing.sm,
-      backgroundColor: pressed ? colors.neutral200 : colors.neutral100,
-      minHeight: tap.minSize,
-      justifyContent: "center",
-    })}
-  >
-    <Text style={{ ...typography.bodyStrong, color: colors.neutral900 }}>{props.Title}</Text>
-    <Text style={{ ...typography.caption, color: colors.neutral600 }}>{props.Time}</Text>
-  </Pressable>
-);
-
-// TODO(brandon): replace this static list with live entries from eventService.
-const PLACEHOLDER_EVENTS: Entry[] = [
-  { Title: "Aztec Baseball Club", Time: "3:30–5:30 pm" },
-  { Title: "Aztec Game Lab", Time: "2:00–5:00 pm" },
-  { Title: "Aztec Game Lab", Time: "2:00–5:00 pm" },
-  { Title: "Aztec Game Lab", Time: "2:00–5:00 pm" },
-  { Title: "Aztec Game Lab", Time: "2:00–5:00 pm" },
-  { Title: "Aztec Game Lab", Time: "2:00–5:00 pm" },
-  { Title: "Aztec Game Lab", Time: "2:00–5:00 pm" },
-  { Title: "Aztec Game Lab", Time: "2:00–5:00 pm" },
-];
+import { MOCK_EVENTS } from "./utils/mockEvents";
 
 export const SideMenu = function () {
   const { width } = useWindowDimensions();
@@ -123,15 +86,10 @@ export const SideMenu = function () {
               </Pressable>
             </View>
 
-            <ScrollView
-              style={{ flex: 1, marginBottom: spacing.lg }}
-              contentContainerStyle={{ paddingBottom: spacing.xl }}
-              showsVerticalScrollIndicator={false}
-            >
-              {PLACEHOLDER_EVENTS.map((entry, idx) => (
-                <SideMenuEntry key={`${entry.Title}-${idx}`} Title={entry.Title} Time={entry.Time} />
-              ))}
-            </ScrollView>
+            {/* TODO(brandon/B5): replace MOCK_EVENTS + loading=false with live Firebase data */}
+            <View style={{ flex: 1, marginBottom: spacing.lg }}>
+              <EventList events={MOCK_EVENTS} loading={false} />
+            </View>
           </Pressable>
         </Pressable>
       </Modal>
