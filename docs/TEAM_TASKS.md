@@ -35,8 +35,8 @@ Track D and reviews integration-branch merges before they roll up to master.
 
 Branch: `feature/brandon/firebase-backend`
 
-- [ ] **A1** `app/utils/firebase.ts` — initialize Firebase JS SDK from `.env`
-- [ ] **A2** Firestore schema for `events` collection (document in
+- [x] **A1** `app/utils/firebase.ts` — initialize Firebase JS SDK from `.env`
+- [x] **A2** Firestore schema for `events` collection (document in
       `docs/DATA_SCHEMA.md`)
 - [ ] **A3** `app/services/eventService.ts` — `addEvent()` wired into the
       Add Event modal in `app/index.tsx`
