@@ -1,0 +1,161 @@
+name: PR Guardrails
+
+# Runs on every PR open/update against master (or feature/integration).
+# Enforces R1–R6 (see body of "Decide and report" step). On any
+# violation, opens an issue assigned to the PR author and @-mentions
+# @BryanD17, then fails the check so the PR cannot merge.
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened]
+    branches:
+      - master
+      - feature/integration
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Evaluate metadata rules (R1–R4)
+        id: rules
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const violations = [];
+
+            // R1 — base branch
+            const allowedBases = ['master', 'feature/integration'];
+            if (!allowedBases.includes(pr.base.ref)) {
+              violations.push(`R1: base '${pr.base.ref}' is not master or feature/integration`);
+            }
+
+            // R2 — head branch shape
+            const headOk = /^(feature\/(brandon|talan|bryan|matt)\/|feature\/integration$|chore\/bryan\/|docs\/|fix\/)/.test(pr.head.ref);
+            if (!headOk) {
+              violations.push(`R2: head branch '${pr.head.ref}' does not match the allowed prefixes (feature/<owner>/, feature/integration, chore/bryan/, docs/, fix/)`);
+            }
+
+            // R3 — author identity vs track owner
+            const owners = {
+              brandon: 'brandonwms120',
+              talan:   'Kyzzo',
+              bryan:   'BryanD17',
+              matt:    'DiploMatt02',
+            };
+            const m = pr.head.ref.match(/^feature\/(brandon|talan|bryan|matt)\//);
+            if (m) {
+              const expected = owners[m[1]];
+              if (pr.user.login.toLowerCase() !== expected.toLowerCase()) {
+                violations.push(`R3: PR author @${pr.user.login} does not own the '${m[1]}' track (expected @${expected})`);
+              }
+            }
+
+            // R4 — issue reference in body
+            if (!/(closes|fixes|refs)\s+#\d+/i.test(pr.body || '')) {
+              violations.push(`R4: PR body must reference at least one issue (e.g. 'Closes #12', 'Fixes #7', or 'Refs #3')`);
+            }
+
+            core.setOutput('list', JSON.stringify(violations));
+
+      - name: Diff-content rules (R5, R6)
+        id: diff
+        if: always()
+        shell: bash
+        run: |
+          set -eo pipefail
+          BASE_REF="${{ github.event.pull_request.base.ref }}"
+          git fetch origin "$BASE_REF" --depth=50
+          CHANGED=$(git diff --name-only "origin/${BASE_REF}...HEAD")
+          echo "$CHANGED" > /tmp/changed.txt
+
+          V=()
+
+          # R5a — .env at repo root or any subdirectory
+          if grep -E '(^|/)\.env$' /tmp/changed.txt >/dev/null; then
+            V+=("R5: .env appears in the diff — never commit it")
+          fi
+          # R5b — node_modules/
+          if grep -E '(^|/)node_modules/' /tmp/changed.txt >/dev/null; then
+            V+=("R5: node_modules/ appears in the diff — never commit it")
+          fi
+          # R5c — long opaque strings inside firebaseConfig files
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            case "$f" in
+              *firebaseConfig.js|*firebaseConfig.ts|*firebaseConfig.json)
+                if [ -f "$f" ] && grep -E '"[A-Za-z0-9_-]{30,}"' "$f" >/dev/null; then
+                  V+=("R5: $f contains what looks like a hardcoded API key — read from env instead")
+                fi
+                ;;
+            esac
+          done < /tmp/changed.txt
+
+          # R6 — TEAM_TASKS.md may only change checkbox state
+          if grep -q '^docs/TEAM_TASKS.md$' /tmp/changed.txt; then
+            NONBOX=$(git diff "origin/${BASE_REF}...HEAD" -- docs/TEAM_TASKS.md \
+              | grep -E '^[+-][^+-]' \
+              | grep -vE '^[+-]\s*-\s*\[[ x~?]\]' \
+              || true)
+            if [ -n "$NONBOX" ]; then
+              V+=("R6: docs/TEAM_TASKS.md was edited beyond checkbox state — open a separate docs PR for prose changes")
+            fi
+          fi
+
+          {
+            echo 'list<<EOF'
+            printf '%s\n' "${V[@]}"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Decide and report
+        if: always()
+        env:
+          RULES_OUTPUT: ${{ steps.rules.outputs.list }}
+          DIFF_OUTPUT: ${{ steps.diff.outputs.list }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const r1 = JSON.parse(process.env.RULES_OUTPUT || '[]');
+            const r2 = (process.env.DIFF_OUTPUT || '')
+              .split('\n').map(s => s.trim()).filter(Boolean);
+            const all = [...r1, ...r2];
+            if (all.length === 0) {
+              core.info('PR Guard: all rules pass.');
+              return;
+            }
+
+            const pr = context.payload.pull_request;
+            const body = [
+              `Automated PR Guard found violations on #${pr.number} (\`${pr.head.ref}\` → \`${pr.base.ref}\`):`,
+              ``,
+              ...all.map(v => `- ${v}`),
+              ``,
+              `PR: ${pr.html_url}`,
+              `Author: @${pr.user.login}`,
+              `cc @BryanD17`,
+              ``,
+              `Please fix and update the PR. The PR cannot merge until all rules pass.`,
+            ].join('\n');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[PR Guard] PR #${pr.number} violates rule(s)`,
+              body,
+              assignees: [pr.user.login],
+              labels: ['pr-guard', 'needs-fix'],
+            });
+
+            core.setFailed(`PR Guard violations:\n${all.join('\n')}`);

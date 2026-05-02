@@ -1,0 +1,4 @@
+# CODEOWNERS — Bryan is required reviewer on all PRs to master.
+# Combined with branch protection ("Require review from Code Owners")
+# this means every PR needs Bryan's approval before merge.
+*       @BryanD17

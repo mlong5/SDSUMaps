@@ -2,83 +2,56 @@
 // map markers (pins) overlaid on top. Tapping a pin opens a modal popup with
 // event details. Also renders the AboutScreen banner at the bottom.
 import { useState } from "react";
-import { Image, Modal, Platform, Pressable, ScrollView, Text, TextInput, useWindowDimensions, View } from "react-native";
+import { Image, Modal, Platform, Pressable, ScrollView, Text, useWindowDimensions, View } from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import AboutScreen from "./aboutScreen";
+import AddEventModal from "./components/AddEventModal";
+import { colors, radius, spacing, tap, typography } from "./constants/theme";
 import ImageC from "./image";
 import PinDetails from "./pinDetails";
 import { SideMenu } from './sideMenu';
 
 export default function Index() {
   const { width, height } = useWindowDimensions();
-  const isLandscape = width > height;
+  const insets = useSafeAreaInsets();
   const isIOS = Platform.OS === "ios";
-  const enableScrollTest = true;
   const topBarHeight = 56;
   const bottomBarHeight = 50;
   const mapWidth = width;
-  const mapHeight = Math.max(height - topBarHeight - bottomBarHeight, 0);
-  //mapHeight is made dependent on topbar height and bottom bar height for spacing
+  // Subtract notch/home-indicator insets so the ScrollView doesn't get clipped
+  // under iPhone's status bar or home indicator in portrait.
+  const mapHeight = Math.max(height - topBarHeight - bottomBarHeight - insets.top - insets.bottom, 0);
 
-  // Controls visibility of the event details modal
   const [modalVis, setModalVis] = useState(false);
   const [addEventVis, setAddEventVis] = useState(false);
-  const [eventName, setEventName] = useState("");
-  const [eventDesc, setEventDesc] = useState("");
-  const [eventTime, setEventTime] = useState("");
-  const [eventDate, setEventDate] = useState("");
-
-  function validateAndSubmitEvent() {
-    if (!eventName || !eventDesc || !eventTime || !eventDate) {
-      alert("Please fill in all fields before submitting.");
-      return;
-    }
-
-    const dateRegex = /^\d{4}-\d{2}-\d{2}$/; // Simple YYYY-MM-DD format check
-    if (!dateRegex.test(eventDate)) {
-      alert("Please enter a valid date in YYYY-MM-DD format.");
-      return;
-    }
-    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/; // Simple HH:MM 24-hour format check
-    if (!timeRegex.test(eventTime)) {
-      alert("Please enter a valid time in HH:MM 24-hour format.");
-      return;
-    }
-    const parsedDate = new Date(`${eventDate}T${eventTime}:00`);
-    if (isNaN(parsedDate.getTime())) {
-      alert("Please enter a valid date and time.");
-      return;
-    }
-
-    // If validation passes, log the event details (or submit to backend)
-
-    console.log({ eventName, eventDesc, eventTime, eventDate });
-    alert("Event submitted successfully!");
-    setAddEventVis(false);
-  }
 
   return (
-    //Main container for top banner, map, and bottom banner
-    <View style={{ width: "100%", height: "100%", flexDirection: "column" }}>
+    // SafeAreaView keeps top bar below the iPhone notch/status bar and the
+    // floating Add Event button above the home indicator, on iOS portrait.
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }} edges={["top", "bottom"]}>
+      <View style={{ flex: 1, flexDirection: "column" }}>
       <View
         style={{
           height: topBarHeight,
           width: "100%",
-          backgroundColor: "#ffffff",
+          backgroundColor: colors.white,
           justifyContent: "center",
           alignItems: "center",
           borderBottomWidth: 1,
-          borderBottomColor: "#d1d5db",
+          borderBottomColor: colors.neutral300,
         }}
       >
-        <Text style={{ color: "#111827", fontSize: 20, fontWeight: "700" }}>SDSU Maps</Text>
-        {/*Actual banner text*/}
+        <Text style={{ ...typography.h2, color: colors.scarlet }}>SDSU Maps</Text>
       </View>
 
-      {/* SDSU campus map with pins anchored inside one responsive wrapper */}
+      {/* SDSU campus map with pins anchored inside one responsive wrapper.
+          minimumZoomScale=1 prevents users from pinch-zooming below the
+          container size, which on iOS portrait used to leave the map
+          shrunken with white space around it. */}
       <ScrollView
         style={{ width: mapWidth, height: mapHeight }}
         contentContainerStyle={{ width: mapWidth, height: mapHeight }}
-        minimumZoomScale={isIOS ? 0.6 : 1}
+        minimumZoomScale={1}
         maximumZoomScale={isIOS ? 3 : 1}
         bouncesZoom={isIOS}
         centerContent
@@ -98,7 +71,7 @@ export default function Index() {
             width: "100%",
             height: "100%",
           }}
-          contentFit="cover"
+          contentFit="contain"
         />
 
         {/* PinDetails marker — tapping shows an alert with placeholder text */}
@@ -128,11 +101,13 @@ export default function Index() {
           />
         </Pressable>
 
-        {/* Modal popup shown when a marker is tapped, displays event info */}
+        {/* Modal popup shown when a marker is tapped, displays event info.
+            Backdrop tap and Android hardware back both dismiss. */}
         <Modal
           visible={modalVis}
           animationType="fade"
           transparent={true}
+          onRequestClose={() => setModalVis(false)}
           supportedOrientations={[
             "portrait",
             "portrait-upside-down",
@@ -141,77 +116,85 @@ export default function Index() {
             "landscape-right",
           ]}
         >
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.2)" }}>
-            <View
+          <Pressable
+            onPress={() => setModalVis(false)}
+            style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colors.overlay }}
+            accessibilityLabel="Close event details"
+          >
+            <Pressable
+              // Inner pressable swallows taps so backdrop dismiss only fires
+              // outside the card body.
+              onPress={(e) => e.stopPropagation?.()}
               style={{
-                width: Math.min(width * 0.4, 230),
-                backgroundColor: "lightgray",
-                borderRadius: 20,
-                padding: 16,
-                alignItems: "center",
-                justifyContent: "space-between",
-                top: isLandscape ? height * 0.03 : height * 0.04,
-                left: width * 0.04,
+                minWidth: Math.min(width * 0.7, 320),
+                maxWidth: 360,
+                backgroundColor: colors.white,
+                borderRadius: radius.lg,
+                paddingVertical: spacing.lg,
+                paddingHorizontal: spacing.lg,
               }}
             >
-              {/* Close button dismisses the modal */}
-              <Pressable onPress={() => setModalVis(false)}>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: "#2b6cb1",
-                    marginBottom: 8,
-                  }}
-                >
-                  Close
-                </Text>
+              {/* Close X — visible affordance, ≥44pt hit area, top-right. */}
+              <Pressable
+                onPress={() => setModalVis(false)}
+                accessibilityRole="button"
+                accessibilityLabel="Close dialog"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                style={{
+                  position: "absolute",
+                  top: spacing.sm,
+                  right: spacing.sm,
+                  width: tap.minSize,
+                  height: tap.minSize,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  zIndex: 2,
+                }}
+              >
+                <Text style={{ ...typography.h3, color: colors.neutral600 }}>×</Text>
               </Pressable>
 
-              {/* Event details text — currently hardcoded, will be dynamic later */}
-              {/* TODO(dvicente4482-sys) - update it so it can display and event objects information instead of static text*/}
-              <Text style={{ textAlign: "left" }}>Aztec Baseball Club 3:30-5:30pm</Text>
-            </View>
-          </View>
+              <Text style={{ ...typography.h3, color: colors.neutral900, marginBottom: spacing.xs, marginRight: tap.minSize }}>
+                Aztec Baseball Club
+              </Text>
+              {/* TODO(dvicente4482-sys): wire to dynamic event object instead of static text */}
+              <Text style={{ ...typography.body, color: colors.neutral700 }}>
+                3:30 – 5:30 pm
+              </Text>
+            </Pressable>
+          </Pressable>
         </Modal>
       </View>
       </ScrollView>
 
-      <Modal
-        visible={addEventVis}
-        animationType="slide"
-        transparent={true}
-        supportedOrientations={[
-          "portrait",
-          "portrait-upside-down",
-          "landscape",
-          "landscape-left",
-          "landscape-right",
-        ]}
-      >
-        <View style={{ flex: 1 }}>
-          <View style={{ position: "absolute", top: isLandscape ? height * 0.1 : height * 0.25, left: width * 0.08, width: Math.min(width * 0.72, 420), backgroundColor: "white", borderRadius: 10, maxHeight: isLandscape ? height * 0.8 : height * 0.6 }}>
-          <ScrollView contentContainerStyle={{ padding: 20 }} keyboardShouldPersistTaps="handled">
-            <TextInput placeholder="Event Name" value={eventName} onChangeText={setEventName} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
-            <TextInput placeholder="Event Description" value={eventDesc} onChangeText={setEventDesc} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
-            <TextInput placeholder="Event Time" value={eventTime} onChangeText={setEventTime} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
-            <TextInput placeholder="Event Date" value={eventDate} onChangeText={setEventDate} style={{ marginBottom: 10, borderBottomWidth: 1 }} />
-            <Pressable onPress={() => setAddEventVis(false)} style={{ backgroundColor: "lightblue", padding: 10, borderRadius: 5 }}>
-              <Text>Cancel</Text>
-            </Pressable>
-            <Pressable onPress={() => validateAndSubmitEvent()} style={{ backgroundColor: "lightgreen", padding: 10, borderRadius: 5, marginTop: 10 }}>
-              <Text>Submit</Text>
-            </Pressable>
-          </ScrollView>
-          </View>
-        </View>
-      </Modal>
+      <AddEventModal visible={addEventVis} onClose={() => setAddEventVis(false)} />
 
-      {/* Button to open the Add Event form */}
+      {/* Floating "Add Event" button. bottom offset clears the AboutScreen
+          banner; minHeight=tap.minSize keeps the hit target ≥44pt. */}
       <Pressable
         onPress={() => setAddEventVis(true)}
-        style={{ position: "absolute", bottom: bottomBarHeight + 10, right: 20, zIndex: 1000, backgroundColor: "red", padding: 10, borderRadius: 5 }}
+        accessibilityRole="button"
+        accessibilityLabel="Add a new campus event"
+        style={({ pressed }) => ({
+          position: "absolute",
+          bottom: bottomBarHeight + spacing.md,
+          right: spacing.lg,
+          zIndex: 1000,
+          minHeight: tap.minSize,
+          paddingHorizontal: spacing.lg,
+          paddingVertical: spacing.sm,
+          borderRadius: radius.pill,
+          backgroundColor: pressed ? colors.scarletDark : colors.scarlet,
+          alignItems: "center",
+          justifyContent: "center",
+          shadowColor: colors.black,
+          shadowOpacity: 0.18,
+          shadowRadius: 6,
+          shadowOffset: { width: 0, height: 2 },
+          elevation: 3,
+        })}
       >
-        <Text>+ Add Event</Text>
+        <Text style={{ ...typography.button, color: colors.scarletInk }}>+ Add Event</Text>
       </Pressable>
 
       <View style={{ height: bottomBarHeight, width: "100%" }}>
@@ -221,6 +204,7 @@ export default function Index() {
       {/* Side menu (just seperated for ease of access, cleaner imo) */}
       <SideMenu />
 
-    </View>
+      </View>
+    </SafeAreaView>
   );
 }
