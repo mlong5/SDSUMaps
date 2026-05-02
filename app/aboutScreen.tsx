@@ -8,7 +8,7 @@ export default function AboutScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.text} numberOfLines={1} accessibilityRole="text">
-        SDSU Maps · tap a pin to see what's happening on campus
+        {"SDSU Maps · tap a pin to see what's happening on campus"}
       </Text>
     </View>
   );
