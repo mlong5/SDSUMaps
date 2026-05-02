@@ -73,7 +73,7 @@ once A4 ships, no hardcoded `Aztec Game Lab` placeholder rows.
 
 Branch: `feature/bryan/ui-polish-map`
 
-- [~] **C1** Local map asset wired (`sdsu_campus_map.jpg`, no external
+- [x] **C1** Local map asset wired (`sdsu_campus_map.jpg`, no external
       URL). _(partial: current asset is 276×183 / 22 KB — thumbnail-sized.
       Higher-res export from https://map.sdsu.edu still owed.)_
 - [x] **C2** iOS portrait layout — `useWindowDimensions`, `contentFit="contain"`,
