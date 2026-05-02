@@ -16,7 +16,7 @@ behind**, and Brandon + Matt are on the critical path for everyone else.
 | Teammate | Track | On track? | Done | Partial | Not done | Notes |
 |----------|-------|-----------|------|---------|----------|-------|
 | Bryan    | C — UI / map / iOS  | ✅ on-track | 4 | 1 | 0 (1 unverified) | C1 partial (low-res asset), C5 awaiting walkthrough |
-| Talan    | B — event display   | ⚠️ lagging | 3 | 3 | 5 | B5 hard-blocked on Brandon (A4); B4 hard-blocked on Matt (D3) |
+| Talan    | B — event display   | ⚠️ lagging | 3 | 0 | 3 | B5 hard-blocked on Brandon (A4); B4 hard-blocked on Matt (D3) |
 | Brandon  | A — backend         | 🚫 critical-path blocker | 0 | 0 | 6 | branch only has `.env.example` + `.gitignore`; no Firebase code |
 | Matt     | D — pins / integration | 🚫 critical-path blocker | 0 | 0 | 5 | branch `feature/matt/pins-integration` does not exist on origin |
 
