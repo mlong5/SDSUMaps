@@ -20,12 +20,16 @@ type PinDetailsProps = {
   source: ImageSourcePropType;
   style: StyleProp<ViewStyle>;
   location: string;
+  onSeeAll: () => void;
 };
 
-export default function PinDetails({ source, style, location }: PinDetailsProps) {
+export default function PinDetails({ source, style, location, onSeeAll }: PinDetailsProps) {
   const { width } = useWindowDimensions();
   const [modalVis, setModalVis] = useState(false);
-  const events = MOCK_EVENTS.filter(e => e.location === location);
+  const events = MOCK_EVENTS
+    .filter(e => e.location === location)
+    .sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
+    .slice(0, 3);
 
   return (
     <>
@@ -90,6 +94,21 @@ export default function PinDetails({ source, style, location }: PinDetailsProps)
             <View style={{ flex: 0 }}>
               <EventList events={events} loading={false} />
             </View>
+            <Pressable
+              onPress={() => { setModalVis(false); onSeeAll(); }}
+              accessibilityRole="button"
+              accessibilityLabel="See all campus events"
+              style={({ pressed }) => ({
+                marginTop: spacing.md,
+                minHeight: tap.minSize,
+                borderRadius: radius.md,
+                backgroundColor: pressed ? colors.scarletDark : colors.scarlet,
+                alignItems: "center",
+                justifyContent: "center",
+              })}
+            >
+              <Text style={{ ...typography.button, color: colors.scarletInk }}>See All</Text>
+            </Pressable>
           </Pressable>
         </Pressable>
       </Modal>

@@ -1,12 +1,16 @@
-import { useState } from "react";
 import { Modal, Pressable, Text, useWindowDimensions, View } from "react-native";
 import EventList from "./components/EventList";
 import { colors, radius, spacing, tap, typography } from "./constants/theme";
 import { MOCK_EVENTS } from "./utils/mockEvents";
 
-export const SideMenu = function () {
+type SideMenuProps = {
+  open: boolean;
+  onOpen: () => void;
+  onClose: () => void;
+};
+
+export const SideMenu = function ({ open, onOpen, onClose }: SideMenuProps) {
   const { width } = useWindowDimensions();
-  const [sideModalVis, setSideModalVis] = useState(false);
 
   const panelWidth = Math.min(Math.max(width * 0.78, 260), 360);
 
@@ -14,7 +18,7 @@ export const SideMenu = function () {
     <>
       {/* Trigger pinned top-left of the screen. ≥44pt tap target. */}
       <Pressable
-        onPress={() => setSideModalVis(true)}
+        onPress={onOpen}
         accessibilityRole="button"
         accessibilityLabel="Open events list"
         style={({ pressed }) => ({
@@ -40,14 +44,14 @@ export const SideMenu = function () {
       </Pressable>
 
       <Modal
-        visible={sideModalVis}
+        visible={open}
         animationType="slide"
         transparent
-        onRequestClose={() => setSideModalVis(false)}
+        onRequestClose={onClose}
       >
         {/* Tap outside the panel to dismiss. */}
         <Pressable
-          onPress={() => setSideModalVis(false)}
+          onPress={onClose}
           accessibilityLabel="Close events list"
           style={{ flex: 1, backgroundColor: colors.overlay, flexDirection: "row" }}
         >
@@ -70,7 +74,7 @@ export const SideMenu = function () {
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.lg }}>
               <Text style={{ ...typography.h2, color: colors.neutral900 }}>Events</Text>
               <Pressable
-                onPress={() => setSideModalVis(false)}
+                onPress={onClose}
                 accessibilityRole="button"
                 accessibilityLabel="Close events list"
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
