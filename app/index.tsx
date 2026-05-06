@@ -2,10 +2,11 @@
 // map markers (pins) overlaid on top. Tapping a pin opens a modal popup with
 // event details. Also renders the AboutScreen banner at the bottom.
 import { useState } from "react";
-import { Image, Modal, Platform, Pressable, ScrollView, Text, useWindowDimensions, View } from "react-native";
+import { Platform, Pressable, ScrollView, Text, useWindowDimensions, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import AboutScreen from "./aboutScreen";
 import AddEventModal from "./components/AddEventModal";
+import { LOCATIONS } from "./constants/locations";
 import { colors, radius, spacing, tap, typography } from "./constants/theme";
 import ImageC from "./image";
 import PinDetails from "./pinDetails";
@@ -22,7 +23,6 @@ export default function Index() {
   // under iPhone's status bar or home indicator in portrait.
   const mapHeight = Math.max(height - topBarHeight - bottomBarHeight - insets.top - insets.bottom, 0);
 
-  const [modalVis, setModalVis] = useState(false);
   const [addEventVis, setAddEventVis] = useState(false);
 
   return (
@@ -74,9 +74,10 @@ export default function Index() {
           contentFit="contain"
         />
 
-        {/* PinDetails marker — tapping shows an alert with placeholder text */}
+        {/* Storm Hall West pin — shows Aztec Game Lab events */}
         <PinDetails
           source={require("../assets/images/marker.png")}
+          location={LOCATIONS.STORM_HALL_WEST_111}
           style={{
             position: "absolute",
             top: mapHeight * 0.42,
@@ -87,83 +88,19 @@ export default function Index() {
           }}
         />
 
-        {/* Second marker — tapping opens the event details modal */}
-        <Pressable
-          onPress={() => setModalVis(true)}
-          style={{ position: "absolute", top: mapHeight * 0.4, left: mapWidth * 0.5, width: mapWidth * 0.04, height: mapHeight * 0.065, zIndex: 9999 }}
-        >
-          <Image
-            source={require("../assets/images/marker.png")}
-            style={{
-              width: "100%",
-              height: "100%",
-            }}
-          />
-        </Pressable>
-
-        {/* Modal popup shown when a marker is tapped, displays event info.
-            Backdrop tap and Android hardware back both dismiss. */}
-        <Modal
-          visible={modalVis}
-          animationType="fade"
-          transparent={true}
-          onRequestClose={() => setModalVis(false)}
-          supportedOrientations={[
-            "portrait",
-            "portrait-upside-down",
-            "landscape",
-            "landscape-left",
-            "landscape-right",
-          ]}
-        >
-          <Pressable
-            onPress={() => setModalVis(false)}
-            style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colors.overlay }}
-            accessibilityLabel="Close event details"
-          >
-            <Pressable
-              // Inner pressable swallows taps so backdrop dismiss only fires
-              // outside the card body.
-              onPress={(e) => e.stopPropagation?.()}
-              style={{
-                minWidth: Math.min(width * 0.7, 320),
-                maxWidth: 360,
-                backgroundColor: colors.white,
-                borderRadius: radius.lg,
-                paddingVertical: spacing.lg,
-                paddingHorizontal: spacing.lg,
-              }}
-            >
-              {/* Close X — visible affordance, ≥44pt hit area, top-right. */}
-              <Pressable
-                onPress={() => setModalVis(false)}
-                accessibilityRole="button"
-                accessibilityLabel="Close dialog"
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                style={{
-                  position: "absolute",
-                  top: spacing.sm,
-                  right: spacing.sm,
-                  width: tap.minSize,
-                  height: tap.minSize,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  zIndex: 2,
-                }}
-              >
-                <Text style={{ ...typography.h3, color: colors.neutral600 }}>×</Text>
-              </Pressable>
-
-              <Text style={{ ...typography.h3, color: colors.neutral900, marginBottom: spacing.xs, marginRight: tap.minSize }}>
-                Aztec Baseball Club
-              </Text>
-              {/* TODO(dvicente4482-sys): wire to dynamic event object instead of static text */}
-              <Text style={{ ...typography.body, color: colors.neutral700 }}>
-                3:30 – 5:30 pm
-              </Text>
-            </Pressable>
-          </Pressable>
-        </Modal>
+        {/* Tony Gwynn Stadium pin — shows Aztec Baseball Club events */}
+        <PinDetails
+          source={require("../assets/images/marker.png")}
+          location={LOCATIONS.TONY_GWYNN_STADIUM}
+          style={{
+            position: "absolute",
+            top: mapHeight * 0.4,
+            left: mapWidth * 0.5,
+            width: mapWidth * 0.04,
+            height: mapHeight * 0.065,
+            zIndex: 999,
+          }}
+        />
       </View>
       </ScrollView>
 

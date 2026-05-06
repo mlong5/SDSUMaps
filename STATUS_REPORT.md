@@ -16,7 +16,7 @@ behind**, and Brandon + Matt are on the critical path for everyone else.
 | Teammate | Track | On track? | Done | Partial | Not done | Notes |
 |----------|-------|-----------|------|---------|----------|-------|
 | Bryan    | C — UI / map / iOS  | ✅ on-track | 4 | 1 | 0 (1 unverified) | C1 partial (low-res asset), C5 awaiting walkthrough |
-| Talan    | B — event display   | ⚠️ lagging | 3 | 0 | 3 | B5 hard-blocked on Brandon (A4); B4 hard-blocked on Matt (D3) |
+| Talan    | B — event display   | ⚠️ lagging | 4 | 0 | 2 | B5 hard-blocked on Brandon (A4); B6 unblocked |
 | Brandon  | A — backend         | 🚫 critical-path blocker | 0 | 0 | 6 | branch only has `.env.example` + `.gitignore`; no Firebase code |
 | Matt     | D — pins / integration | 🚫 critical-path blocker | 0 | 0 | 5 | branch `feature/matt/pins-integration` does not exist on origin |
 
@@ -60,11 +60,11 @@ behind**, and Brandon + Matt are on the critical path for everyone else.
 | B1 `app/utils/mockEvents.ts` | ✅ Done | `app/utils/mockEvents.tsx` on master |
 | B2 `EventList.tsx` | ✅ Done | `app/components/EventList.tsx` on master |
 | B3 EventList wired into `sideMenu.tsx` | ✅ Done | `sideMenu.tsx` imports EventList from `./components/EventList`; PLACEHOLDER_EVENTS array and SideMenuEntry component removed; ScrollView replaced with `<EventList events={MOCK_EVENTS} loading={false} />`; loading spinner and empty state delegated to EventList props |
-| B4 `pinDetails.tsx` filters events | 🚫 NotDone | only fires a static `Alert.alert('Gym Club…')`; no `events.filter`, no "See All" link |
+| B4 `pinDetails.tsx` filters events | ✅ Done | accepts `location` prop; filters `MOCK_EVENTS` by location; shows `EventList` in a modal; `app/constants/locations.ts` added |
 | B5 swap mock for `getActiveEvents` | 🚫 NotDone (blocked by A4) | `getActiveEvents` not referenced anywhere |
 | B6 tests | 🚫 NotDone | no test files |
 
-**What's blocking him:** B5 is hard-blocked on Brandon's A4. B4 is hard-blocked on Matt's D3 (`locations.ts` shared map). B1, B3, B6 are unblocked and can be done today.
+**What's blocking him:** B5 is hard-blocked on Brandon's A4. B6 (tests) is unblocked — jest setup + render/filter tests can be written now against mock data.
 
 **Outreach scaffolded:** 5 per-task issues + 1 tracking issue (see `.agent/outreach/07-11`, `20`).
 
