@@ -24,6 +24,7 @@ export default function Index() {
   const mapHeight = Math.max(height - topBarHeight - bottomBarHeight - insets.top - insets.bottom, 0);
 
   const [addEventVis, setAddEventVis] = useState(false);
+  const [sideMenuOpen, setSideMenuOpen] = useState(false);
 
   return (
     // SafeAreaView keeps top bar below the iPhone notch/status bar and the
@@ -78,6 +79,7 @@ export default function Index() {
         <PinDetails
           source={require("../assets/images/marker.png")}
           location={LOCATIONS.STORM_HALL_WEST_111}
+          onSeeAll={() => setSideMenuOpen(true)}
           style={{
             position: "absolute",
             top: mapHeight * 0.42,
@@ -92,6 +94,7 @@ export default function Index() {
         <PinDetails
           source={require("../assets/images/marker.png")}
           location={LOCATIONS.TONY_GWYNN_STADIUM}
+          onSeeAll={() => setSideMenuOpen(true)}
           style={{
             position: "absolute",
             top: mapHeight * 0.4,
@@ -139,7 +142,11 @@ export default function Index() {
       </View>
 
       {/* Side menu (just seperated for ease of access, cleaner imo) */}
-      <SideMenu />
+      <SideMenu
+        open={sideMenuOpen}
+        onOpen={() => setSideMenuOpen(true)}
+        onClose={() => setSideMenuOpen(false)}
+      />
 
       </View>
     </SafeAreaView>
