@@ -59,7 +59,7 @@ Branch: `feature/talan/event-display`
 - [x] **B2** `app/components/EventList.tsx` — card list sorted by time
 - [x] **B3** Wire `EventList` into `app/sideMenu.tsx`; add loading + empty
       states
-- [ ] **B4** `app/pinDetails.tsx` — filter events to the tapped pin's
+- [x] **B4** `app/pinDetails.tsx` — filter events to the tapped pin's
       location (use `app/constants/locations.ts` from D3 for exact strings)
 - [ ] **B5** Swap mock data for `getActiveEvents()` once A4 lands
 - [ ] **B6** Render and filter tests; manual run via `npx expo start`
