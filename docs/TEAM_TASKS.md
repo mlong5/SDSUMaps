@@ -98,15 +98,15 @@ README with screenshots.
 
 Branch: `feature/matt/pins-integration`
 
-- [ ] **D1** Audit current pins in `app/index.tsx`, write
+- [x] **D1** Audit current pins in `app/index.tsx`, write
       `docs/pins_list.txt` (PinID | Location | x | y | Notes)
-- [ ] **D2** Add 5–10 missing campus pins (Student Union, Love Library,
+- [x] **D2** Add 5–10 missing campus pins (Student Union, Love Library,
       GMCS, ENS, Viejas, etc.) — aim for 10–15 total
-- [ ] **D3** `app/constants/locations.ts` — shared `LOCATIONS` map so pin
+- [x] **D3** `app/constants/locations.ts` — shared `LOCATIONS` map so pin
       labels and Firestore `location` strings always match
-- [ ] **D4** Integration merge: Brandon → Talan → Matt → Bryan, run
+- [x] **D4** Integration merge: Brandon → Talan → Matt → Bryan, run
       `npx expo start` after each merge
-- [ ] **D5** End-to-end flow test (open app → tap pin → see events → add
+- [x] **D5** End-to-end flow test (open app → tap pin → see events → add
       event → confirm it shows up → confirm expired events are hidden)
 
 **Deliverables:** ≥10 pins, shared locations constant, green integration
